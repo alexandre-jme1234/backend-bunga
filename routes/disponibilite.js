@@ -59,14 +59,7 @@ router.get("/:destination/:dateSouhait/:inputcapacite", async (req, res) => {
         },
       },
     },
-    duree: {
-      $ceil: {
-        $divide: [
-          { $subtract: [dateSouhait, "$dateDebut"] },
-          1000 * 60 * 60 * 24 * 7, // Nombre de millisecondes dans une semaine
-        ],
-      },
-    },
+ 
 
 
 
