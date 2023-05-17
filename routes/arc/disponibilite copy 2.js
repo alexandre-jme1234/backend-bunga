@@ -3,18 +3,20 @@ var router = express.Router();
 
 const Disponibilite = require("../models/disponibilites");
 
-//Objectif route avec requete sur destination, date souhaité, nbr pers 
+//faire un /lieu date nbr pers
+// , dateDebut, nombrePersonnes
 
+// console.log(bungalow_dispo)
 
 router.get("/:destination/:dateSouhait/:inputcapacite", async (req, res) => {
   const destination = req.params.destination;
 
-// formatage input dateSouhait = date("2023-08-01T00:00:00.000Z")
   const dateSouhait = new Date(req.params.dateSouhait);
-  
+  // const dateSouhait = date("2023-08-01T00:00:00.000Z")
+
   const inputcapacite = parseInt(req.params.inputcapacite);
 
-  //-- Filtre de recherche en fonction destination
+  // création des critères de recherche en fonction destination date et nbr de pers max
 
   let matchCritere = {
     $or: [
@@ -22,16 +24,16 @@ router.get("/:destination/:dateSouhait/:inputcapacite", async (req, res) => {
       { "bungalow_dispo.departementNom": destination },
     ],
   };
- 
+  //-------------------------------Date de souhait
 
-  //-- Filtre de recherche en fonction  de la Capacité
+  // //-----------------------------Capacité
   if (inputcapacite) {
     matchCritere.capacite = {
       $gte: parseInt(inputcapacite),
     };
   }
 
-  // --Filtre de recherche en fonction input datesouhait entre debut fin dispo
+  // ---------------------Filtre date souhait entre debut fin dispo
 
   if (dateSouhait) {
     matchCritere.$and = [
@@ -49,7 +51,7 @@ router.get("/:destination/:dateSouhait/:inputcapacite", async (req, res) => {
         as: "bungalow_dispo",
       },
     },
-    {//preparation data capaciteAdulte + capaciteEnfant pour filtre capacité
+    {
       $addFields: {
         capacite: {
           $sum: [
@@ -59,25 +61,12 @@ router.get("/:destination/:dateSouhait/:inputcapacite", async (req, res) => {
         },
       },
     },
-    duree: {
-      $ceil: {
-        $divide: [
-          { $subtract: [dateSouhait, "$dateDebut"] },
-          1000 * 60 * 60 * 24 * 7, // Nombre de millisecondes dans une semaine
-        ],
-      },
-    },
-
-
-
-
     {
       $match: matchCritere,
     },
   ]);
-  // pour visualiser les dates pour controle sur la console
-  // console.log(dateSouhait);
-  // console.log(results[0].dateFin);
+  console.log(dateSouhait);
+  console.log(results[0].dateFin);
   return res.json(results);
 });
 
