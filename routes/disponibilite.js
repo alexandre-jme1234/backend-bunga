@@ -6,13 +6,13 @@ const Disponibilite = require("../models/disponibilites");
 //Objectif route avec requete sur destination, date souhaité, nbr pers 
 
 
-router.get("/:destination/:dateSouhait/:inputcapacite", async (req, res) => {
-  const destination = req.params.destination;
+router.get("/", async (req, res) => {
+  const destination = req.query.destination;
 
 // formatage input dateSouhait = date("2023-08-01T00:00:00.000Z")
-  const dateSouhait = new Date(req.params.dateSouhait);
-  
-  const inputcapacite = parseInt(req.params.inputcapacite);
+  const dateSouhait = new Date(req.query.dateSouhait);
+
+  const inputcapacite = parseInt(req.query.bodyCounter);
 
   //-- Filtre de recherche en fonction destination
 
@@ -68,10 +68,13 @@ router.get("/:destination/:dateSouhait/:inputcapacite", async (req, res) => {
       $match: matchCritere,
     },
   ]);
+
+  
+
   // pour visualiser les dates pour controle sur la console
   // console.log(dateSouhait);
   // console.log(results[0].dateFin);
-  return res.json(results);
+  return res.json({ success: true, results});
 });
 
 module.exports = router;
