@@ -43,7 +43,7 @@ router.get("/dispo", async (req, res) => {
     }
     // 
 
-    const bungalows = await Bungalow.aggregate([
+    const results  = await Bungalow.aggregate([
       {
         $lookup: {
           from: "disponibilites",
@@ -63,7 +63,7 @@ router.get("/dispo", async (req, res) => {
         $match: matchCritere,
       },
     ]);
-    res.json(bungalows);
+    res.json({ success: true, results});
   // } catch (error) {
   //   res.status(500).send(error);
   // }
