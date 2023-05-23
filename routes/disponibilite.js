@@ -5,7 +5,6 @@ const Disponibilite = require("../models/disponibilites");
 
 //Objectif route avec requete sur destination, date souhaité, nbr pers 
 
-
 router.get("/", async (req, res) => {
   const destination = req.query.destination;
 
@@ -59,9 +58,6 @@ router.get("/", async (req, res) => {
         },
       },
     },
- 
-
-
 
 
     {
@@ -73,7 +69,7 @@ router.get("/", async (req, res) => {
 
   // pour visualiser les dates pour controle sur la console
   // console.log(dateSouhait);
-  // console.log(results[0].dateFin);
+  console.log(results[0]);
   return res.json({ success: true, results});
 });
 
