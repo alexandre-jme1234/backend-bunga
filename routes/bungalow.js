@@ -9,6 +9,15 @@ router.post("/", async (req, res) => {
 
 //---------route bungalow dispo
 
+router.get('/', async (req, res) => {
+  const bungalows = await Bungalow.find()
+  return res.json({ bungalows })
+})
+
+router.get('/hello', (req, res) => {
+  return res.json({ message: 'hello'})
+})
+
 router.get("/dispo", async (req, res) => {
   console.log(req.query.dateString);
   const destination = req.query.destination;
