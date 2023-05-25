@@ -10,10 +10,12 @@ router.post("/", async (req, res) => {
 //---------route bungalow dispo
 
 router.get("/dispo", async (req, res) => {
-  // try {
+  console.log(req.query.dateString)
     const destination = req.query.destination;
     // formatage input dateSouhait = date("2023-08-01T00:00:00.000Z")
-    const dateSouhait = new Date(req.query.dateSouhait);
+    // ====> remettre la date en dynamique
+    const dateSouhait = new Date(req.query.dateString);
+    // const dateSouhait = new Date(2023-07-19);
     const inputcapacite = parseInt(req.query.bodyCounter);
     console.log("datesouhait", dateSouhait)
     console.log("destination", destination)
