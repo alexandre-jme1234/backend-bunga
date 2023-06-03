@@ -8,7 +8,7 @@ const Disponibilite = require("../models/disponibilites");
 router.get("/", async (req, res) => {
   const destination = req.query.destination;
 
-// formatage input dateSouhait = date("2023-08-01T00:00:00.000Z")
+  // formatage input dateSouhait = date("2023-08-01T00:00:00.000Z")
   const dateSouhait = new Date(req.query.dateSouhait);
 
   const inputcapacite = parseInt(req.query.bodyCounter);
@@ -21,7 +21,6 @@ router.get("/", async (req, res) => {
       { "bungalow_dispo.departementNom": destination },
     ],
   };
- 
 
   //-- Filtre de recherche en fonction  de la Capacité
   if (inputcapacite) {
@@ -48,7 +47,8 @@ router.get("/", async (req, res) => {
         as: "bungalow_dispo",
       },
     },
-    {//preparation data capaciteAdulte + capaciteEnfant pour filtre capacité
+    {
+      //preparation data capaciteAdulte + capaciteEnfant pour filtre capacité
       $addFields: {
         capacite: {
           $sum: [
@@ -59,23 +59,12 @@ router.get("/", async (req, res) => {
       },
     },
 
-
     {
       $match: matchCritere,
     },
   ]);
 
-  
-
-  // pour visualiser les dates pour controle sur la console
-  // console.log(dateSouhait);
-  console.log(results[0]);
-  return res.json({ success: true, results});
+  return res.json({ success: true, results });
 });
 
 module.exports = router;
-
-// router.post("/", async (req, res) => {
-//   console.log(req.body);
-//   const newDoc = await Disponibilite.create({ bungalow: req.body.bungalow });
-//   res.json(newDoc);

@@ -9,67 +9,74 @@ router.post("/", async (req, res) => {
 
 //---------route bungalow dispo
 
+router.get('/', async (req, res) => {
+  const bungalows = await Bungalow.find()
+  return res.json({ bungalows })
+})
+
+router.get('/hello', (req, res) => {
+  return res.json({ message: 'hello'})
+})
+
 router.get("/dispo", async (req, res) => {
-  // try {
-    const destination = req.query.destination;
-    // formatage input dateSouhait = date("2023-08-01T00:00:00.000Z")
-    const dateSouhait = new Date(req.query.dateSouhait);
-    const inputcapacite = parseInt(req.query.bodyCounter);
-    console.log("datesouhait", dateSouhait)
-    console.log("destination", destination)
-    console.log("inputcapacite", inputcapacite)
-    let matchCritere = {}
-    //-- Filtre de recherche en fonction destination
-    if (destination !== undefined) {
+  console.log(req.query.dateString);
+  const destination = req.query.destination;
+
+  // formatage input dateSouhait = date("2023-08-01T00:00:00.000Z")
+
+  const dateSouhait = new Date(req.query.dateString);
+
+  const inputcapacite = parseInt(req.query.bodyCounter);
+  console.log("datesouhait", dateSouhait);
+  console.log("destination", destination);
+  console.log("inputcapacite", inputcapacite);
+  let matchCritere = {};
+  //-- Filtre de recherche en fonction destination
+  if (destination !== undefined) {
     matchCritere = {
       $or: [{ ville: destination }, { departementNom: destination }],
-    };}
-    //-- Filtre de capacite du bungalow
-    if (inputcapacite) {
-      const parsedCapacite = parseInt(inputcapacite);
-      if (!isNaN(parsedCapacite)) {
-        matchCritere.capacite = { $gte: parsedCapacite };
-      }
+    };
+  }
+  //-- Filtre de capacite du bungalow
+  if (inputcapacite) {
+    const parsedCapacite = parseInt(inputcapacite);
+    if (!isNaN(parsedCapacite)) {
+      matchCritere.capacite = { $gte: parsedCapacite };
     }
-    //-- Filtre date de demarrage demarrage souhaité de la location
-    if (dateSouhait) {
-      const parsedDate = new Date(dateSouhait);
-      if (!isNaN(parsedDate.getTime())) {
-        matchCritere.$and = [
-          { "disponibilites.dateDebut": { $lte: parsedDate } },
-          { "disponibilites.dateFin": { $gte: parsedDate } },
-        ];
-      }
+  }
+  //-- Filtre date de demarrage demarrage souhaité de la location
+  if (dateSouhait) {
+    const parsedDate = new Date(dateSouhait);
+    if (!isNaN(parsedDate.getTime())) {
+      matchCritere.$and = [
+        { "disponibilites.dateDebut": { $lte: parsedDate } },
+        { "disponibilites.dateFin": { $gte: parsedDate } },
+      ];
     }
-    // 
+  }
+  //
 
-    const results  = await Bungalow.aggregate([
-      {
-        $lookup: {
-          from: "disponibilites",
-          localField: "_id",
-          foreignField: "bungalow",
-          as: "disponibilites",
-        },
+  const results = await Bungalow.aggregate([
+    {
+      $lookup: {
+        from: "disponibilites",
+        localField: "_id",
+        foreignField: "bungalow",
+        as: "disponibilites",
       },
-      {
-        //preparation data capaciteAdulte + capaciteEnfant pour filtre capacité
+    },
+    {
+      //preparation data capaciteAdulte + capaciteEnfant pour filtre capacité
 
-        $addFields: {
-          capacite: { $add: ["$capaciteAdulte", "$capaciteEnfant"] },
-        },
+      $addFields: {
+        capacite: { $add: ["$capaciteAdulte", "$capaciteEnfant"] },
       },
-      {
-        $match: matchCritere,
-      },
-    ]);
-    res.json({ success: true, results});
-  // } catch (error) {
-  //   res.status(500).send(error);
-  // }
+    },
+    {
+      $match: matchCritere,
+    },
+  ]);
+  res.json({ success: true, results });
 });
-
-
-
 
 module.exports = router;
