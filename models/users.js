@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema({
 	inscriptionDate: Date,
 	entreprise: String,
 	role: String,
+	password: String
 });
 
 const User = mongoose.model('users', userSchema);
