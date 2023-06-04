@@ -66,7 +66,7 @@ router.post('/signin', (req, res) => {
       res.json({result: true, token: data.token});
     } else {
       res.json({result: false, token: 'User not found or wrong password'})
-      console.log('mdp _', data.password) 
+      console.log('mdp _', data.password)
     }
   })
 })
