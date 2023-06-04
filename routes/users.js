@@ -54,21 +54,19 @@ User.findOne({email: req.body.email}).then(data => {
 
 
 // !! SIGNIN --- Avec la fonction CheckBody, on vérifie que email et password ne sont pas des champs vides/
-
 router.post('/signin', (req, res) => {
   if(!checkBody(req.body, (['email', 'password']))) {
     res.json({result: false, error: 'Missing or empty fields'})
   }
-  
 
-
-// SIGNIN --- On recherche dans le modèle User, un email existant, si l'email et sont password crorespondent on connecte.
+  // SIGNIN --- On recherche dans le modèle User, un email existant, si l'email et sont password crorespondent on connecte.
   User.findOne({email: req.body.email}).then(data => {
-    console.log('mdp _', data.password)
+    console.log('email _', req.body.email)
     if(bcrypt.compareSync(req.body.password, data.password)) {
       res.json({result: true, token: data.token});
     } else {
       res.json({result: false, token: 'User not found or wrong password'})
+      console.log('mdp _', data.password) 
     }
   })
 })
