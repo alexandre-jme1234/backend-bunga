@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
 const { checkBody } = require('../modules/checkBody');
+
+// ---- 
 const uid2 = require('uid2');
 const bcrypt = require('bcrypt');
 
 const User = require('../models/users');
 const token = uid2(32);
-const hash = bcrypt.hashSync('password', 10);
 
 
 
@@ -20,7 +21,7 @@ router.get('/', function(req, res, next) { //faire un /users pour utiliser la ro
 
 // ---- route SignUp -- CheckBody vérifie que l'élément email et password ne sont pas vide.
 
-router.get('/signup', (req, res) => {
+router.post('/signup', (req, res) => {
   if (!checkBody(req.body, ['email', 'password'])) {
     res.json({ result: false, error: 'Missing or empty fields' });
     return;
@@ -30,7 +31,8 @@ router.get('/signup', (req, res) => {
 
 User.findOne({email: req.body.email}).then(data => {
   if(data === null) {
-    
+    const hash = bcrypt.hashSync(req.body.password, 10);
+    // const inscriptionDate = new Date(req.body.inscriptionDate)
     const newUser = new User({
       nom: req.body.nom,
       prenom: req.body.prenom,
@@ -55,20 +57,18 @@ User.findOne({email: req.body.email}).then(data => {
 
 // !! SIGNIN --- Avec la fonction CheckBody, on vérifie que email et password ne sont pas des champs vides/
 router.post('/signin', (req, res) => {
-  if(!checkBody(req.body, (['email', 'password']))) {
-    res.json({result: false, error: 'Missing or empty fields'})
+  if (!checkBody(req.body, ['email', 'password'])) {
+    res.json({ result: false, error: 'Missing or empty fields' });
+    return;
   }
 
-  // SIGNIN --- On recherche dans le modèle User, un email existant, si l'email et sont password crorespondent on connecte.
-  User.findOne({email: req.body.email}).then(data => {
-    console.log('email _', req.body.email)
-    if(bcrypt.compareSync(req.body.password, data.password)) {
-      res.json({result: true, token: data.token});
+  User.findOne({ email: req.body.email }).then(data => {
+    if (bcrypt.compareSync(req.body.password, data.password)) {
+      res.json({ result: true, token: data.token, email: data.email });
     } else {
-      res.json({result: false, token: 'User not found or wrong password'})
-      console.log('mdp _', data.password)
+      res.json({ result: false, error: 'User not found or wrong password' });
     }
-  })
-})
+  });
+});
 
 module.exports = router;
