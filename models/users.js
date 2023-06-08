@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-
-
 const userSchema = mongoose.Schema({
 	nom: String,
 	prenom: String,
@@ -10,6 +8,7 @@ const userSchema = mongoose.Schema({
 	inscriptionDate: Date,
 	entreprise: String,
 	role: String,
+	password: String
 });
 
 const User = mongoose.model('users', userSchema);
