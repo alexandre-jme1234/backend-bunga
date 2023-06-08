@@ -14,6 +14,7 @@ router.get("/", async (req, res) => {
   const inputcapacite = parseInt(req.query.bodyCounter);
 
   //-- Filtre de recherche en fonction destination
+
   let matchCritere = {
     $or: [
       { "bungalow_dispo.ville": destination },
@@ -42,7 +43,6 @@ router.get("/", async (req, res) => {
       $lookup: {
         from: "bungalows",
         localField: "bungalow",
-        // ---- clé étrangère de bungalow. --- renvoit la liste des disponibilités par bungalow.
         foreignField: "_id",
         as: "bungalow_dispo",
       },
