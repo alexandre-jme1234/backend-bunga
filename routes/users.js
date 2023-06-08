@@ -2,14 +2,12 @@ var express = require('express');
 var router = express.Router();
 const { checkBody } = require('../modules/checkBody');
 
-// ---- 
+// ----
 const uid2 = require('uid2');
 const bcrypt = require('bcrypt');
 
 const User = require('../models/users');
 const token = uid2(32);
-
-
 
 router.get('/', function(req, res, next) { //faire un /users pour utiliser la route
   User.find().then(data => {
@@ -20,7 +18,6 @@ router.get('/', function(req, res, next) { //faire un /users pour utiliser la ro
 });
 
 // ---- route SignUp -- CheckBody vérifie que l'élément email et password ne sont pas vide.
-
 router.post('/signup', (req, res) => {
   if (!checkBody(req.body, ['email', 'password'])) {
     res.json({ result: false, error: 'Missing or empty fields' });
@@ -28,7 +25,6 @@ router.post('/signup', (req, res) => {
 }
 
 // ---- SIGNUP : Si l'user n'est pas déjà connecté alors on créé un nouvel utilisateur
-
 User.findOne({email: req.body.email}).then(data => {
   if(data === null) {
     const hash = bcrypt.hashSync(req.body.password, 10);
